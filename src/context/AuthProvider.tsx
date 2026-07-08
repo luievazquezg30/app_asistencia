@@ -1,34 +1,77 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
+import { User } from "../models/User";
+import AuthService from "../services/AuthService";
+import storage from "../storages/Storage";
 
-interface Props{
-
-    children:ReactNode;
-
+interface Props {
+  children: ReactNode;
 }
 
-const AuthProvider=({children}:Props)=>{
+const AuthProvider = ({ children }: Props) => {
+  const [user, setUser] = useState<User | null>(null);
 
-    const [user,setUser]=useState(null);
+  useEffect(() => {
+    cargarSesion();
+  }, []);
 
-    return(
+  const cargarSesion = async () => {
+    const usuarioGuardado = await storage.get("user");
 
-        <AuthContext.Provider
-            value={{
+    if (usuarioGuardado) {
+      setUser(usuarioGuardado);
+    }
+  };
 
-                user,
+  const login = async (
+    usuario: string,
+    password: string
+): Promise<User | null> => {
 
-                setUser
 
-            }}
-        >
-
-            {children}
-
-        </AuthContext.Provider>
-
+    const usuarioEncontrado = AuthService.login(
+        usuario,
+        password
     );
 
-}
+
+    if (!usuarioEncontrado) {
+
+        return null;
+
+    }
+
+
+    setUser(usuarioEncontrado);
+
+
+    await storage.set(
+        "user",
+        usuarioEncontrado
+    );
+
+
+    return usuarioEncontrado;
+
+};
+
+  const logout = async () => {
+    setUser(null);
+
+    await storage.remove("user");
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
 export default AuthProvider;

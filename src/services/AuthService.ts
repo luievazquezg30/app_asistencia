@@ -4,18 +4,23 @@ class AuthService{
 
     login(usuario:string,password:string){
 
-        return users.find(
+    const usuarioEncontrado = users.find(
 
-            user=>
+        user=>
+            user.usuario===usuario &&
+            user.password===password
 
-                user.usuario===usuario &&
+    );
 
-                user.password===password
 
-        );
+    console.log("Usuario encontrado:", usuarioEncontrado);
+
+
+    return usuarioEncontrado;
+
+}
 
     }
 
-}
 
 export default new AuthService();

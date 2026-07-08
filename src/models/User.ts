@@ -10,6 +10,6 @@ export interface User {
 
     password:string;
 
-    rol:Role;
+    rol:string;
 
 }

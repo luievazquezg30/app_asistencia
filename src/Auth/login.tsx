@@ -1,40 +1,200 @@
+import React, { useState } from "react";
+
 import {
-    IonContent,
-    IonHeader,
     IonPage,
-    IonTitle,
-    IonToolbar
+    IonContent,
+    IonInput,
+    IonButton,
+    IonItem,
+    IonLabel,
+    IonText
 } from "@ionic/react";
 
-const Login = () => {
+import { useHistory } from "react-router-dom";
+
+import { useAuth } from "../hooks/useAuth";
+
+
+
+const Login: React.FC = () => {
+
+
+    const [usuario, setUsuario] = useState("");
+
+    const [password, setPassword] = useState("");
+
+    const [error, setError] = useState("");
+
+
+    const { login } = useAuth();
+
+
+    const history = useHistory();
+
+
+
+    const ingresar = async()=>{
+
+
+    setError("");
+
+
+    const usuarioLogueado = await login(
+        usuario,
+        password
+    );
+
+
+    if(!usuarioLogueado){
+
+        setError(
+            "Credenciales incorrectas"
+        );
+
+        return;
+
+    }
+
+
+
+    switch(usuarioLogueado.rol){
+
+
+        case "admin":
+
+            history.replace("/admin");
+
+        break;
+
+
+
+        case "supervisor":
+
+            history.replace("/supervisor");
+
+        break;
+
+
+
+        case "empleado":
+
+            history.replace("/empleado");
+
+        break;
+
+
+
+        default:
+
+            setError(
+                "Rol no válido"
+            );
+
+        break;
+
+
+    }
+
+
+};
+
 
     return (
 
         <IonPage>
 
-            <IonHeader>
+            <IonContent
+                className="ion-padding"
+            >
 
-                <IonToolbar>
 
-                    <IonTitle>
+                <IonItem>
 
-                        Login
+                    <IonLabel position="floating">
+                        Usuario
+                    </IonLabel>
 
-                    </IonTitle>
+                    <IonInput
 
-                </IonToolbar>
+                        value={usuario}
 
-            </IonHeader>
+                        onIonChange={(e)=>
+                            setUsuario(
+                                e.detail.value!
+                            )
+                        }
 
-            <IonContent className="ion-padding">
+                    />
 
-            
+                </IonItem>
+
+
+
+                <IonItem>
+
+                    <IonLabel position="floating">
+                        Contraseña
+                    </IonLabel>
+
+
+                    <IonInput
+
+                        type="password"
+
+                        value={password}
+
+                        onIonChange={(e)=>
+                            setPassword(
+                                e.detail.value!
+                            )
+                        }
+
+                    />
+
+
+                </IonItem>
+
+
+
+                {
+                    error && (
+
+                        <IonText color="danger">
+
+                            <p>
+                                {error}
+                            </p>
+
+                        </IonText>
+
+                    )
+                }
+
+
+
+                <IonButton
+
+                    expand="block"
+
+                    onClick={ingresar}
+
+                >
+
+                    Ingresar
+
+                </IonButton>
+
+
+
             </IonContent>
+
 
         </IonPage>
 
     );
 
-}
+
+};
+
 
 export default Login;
