@@ -1,85 +1,139 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
-IonContent,
-IonHeader,
-IonPage,
-IonTitle,
-IonToolbar
+  IonButton,
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar
 } from "@ionic/react";
 
 import { useAuth } from "../../hooks/useAuth";
-
+import AttendanceService from "../../services/AsistenciaService";
+import AttendanceCard from "../../components/showAsistencia";
+import RegisterAttendanceModal from "../../components/registrarAsistenciaModal";
+import { Attendance } from "../../models/Asistencia";
 
 const Dashboard: React.FC = () => {
 
+  const { user } = useAuth();
 
-const {user}=useAuth();
+  const [attendance, setAttendance] = useState<Attendance[]>([]);
+  const [showModal, setShowModal] = useState(false);
 
+  useEffect(() => {
 
+    if (user) {
 
-return(
+      const data = AttendanceService.getAttendanceByEmployee(user.id);
 
-<IonPage>
+      setAttendance(data);
 
+    }
 
-<IonHeader>
+  }, [user]);
 
-<IonToolbar>
+  const handleSaveAttendance = (
+    photo: string,
+    latitude: number,
+    longitude: number
+  ) => {
 
-<IonTitle>
-Dashboard Empleado
-</IonTitle>
+    console.log("Foto:", photo);
+    console.log("Latitud:", latitude);
+    console.log("Longitud:", longitude);
 
-</IonToolbar>
+    // Aquí después guardarás la asistencia
 
-</IonHeader>
+    setShowModal(false);
 
+  };
 
+  return (
 
-<IonContent className="ion-padding">
+    <IonPage>
 
+      <IonHeader>
 
-<h1>
-Hola {user?.nombre}
-</h1>
+        <IonToolbar>
 
+          <IonTitle>
+            Dashboard Empleado
+          </IonTitle>
 
-<p>
-Panel del empleado
-</p>
+        </IonToolbar>
 
+      </IonHeader>
 
-<ul>
+      <IonContent className="ion-padding">
 
-<li>
-Registrar entrada
-</li>
+        <h1>
+          Hola {user?.nombre}
+        </h1>
 
+        <p>
+          Panel del empleado
+        </p>
 
-<li>
-Registrar salida
-</li>
+        <IonButton
+          expand="block"
+          onClick={() => setShowModal(true)}
+        >
+          Registrar Entrada
+        </IonButton>
 
+        <IonButton
+          expand="block"
+          color="danger"
+          onClick={() => setShowModal(true)}
+        >
+          Registrar Salida
+        </IonButton>
 
-<li>
-Consultar historial
-</li>
+        <hr />
 
+        <h2>
+          Historial de asistencias
+        </h2>
 
-</ul>
+        {
+          attendance.length > 0 ? (
 
+            attendance.map((item) => (
 
-</IonContent>
+              <AttendanceCard
+                key={item.id}
+                attendance={item}
+              />
 
+            ))
 
-</IonPage>
+          ) : (
 
+            <p>
+              No hay asistencias registradas.
+            </p>
 
-);
+          )
+        }
 
+        <RegisterAttendanceModal
+
+          isOpen={showModal}
+
+          onClose={() => setShowModal(false)}
+
+          onSave={handleSaveAttendance}
+
+        />
+
+      </IonContent>
+
+    </IonPage>
+
+  );
 
 };
-
 
 export default Dashboard;

@@ -13,3 +13,17 @@ export interface User {
     rol:string;
 
 }
+
+export interface Employee {
+
+    id:number;
+
+    nombre:string;
+
+    email:string;
+
+    password:string;
+
+    rol:string;
+
+}

@@ -1,15 +1,21 @@
 export interface Attendance {
 
-id:number;
+    id:number;
 
-employeeId:number;
+    employeeId:number;
 
-date:string;
+    date:string;
 
-entryTime:string;
+    entryTime:string;
 
-exitTime:string;
+    exitTime:string;
 
-status:string;
+    status:string;
+
+    photo?:string;
+
+    latitude?:number;
+
+    longitude?:number;
 
 }
