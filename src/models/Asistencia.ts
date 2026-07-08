@@ -1,13 +1,15 @@
-export interface Asistencia{
+export interface Attendance {
 
-    id:number;
+id:number;
 
-    empleadoId:number;
+employeeId:number;
 
-    fecha:string;
+date:string;
 
-    entrada:string;
+entryTime:string;
 
-    salida:string;
+exitTime:string;
+
+status:string;
 
 }

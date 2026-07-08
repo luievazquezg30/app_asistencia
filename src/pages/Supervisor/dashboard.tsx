@@ -1,30 +1,79 @@
 import React from "react";
 
-import {
-    IonPage,
-    IonContent,
-    IonTitle
+import { 
+IonContent,
+IonHeader,
+IonPage,
+IonTitle,
+IonToolbar
 } from "@ionic/react";
 
+import { useAuth } from "../../hooks/useAuth";
 
-const Dashboard = () => {
+
+const Dashboard: React.FC = () => {
 
 
-    return (
+const {user}=useAuth();
 
-        <IonPage>
 
-            <IonContent className="ion-padding">
+return(
 
-                <IonTitle>
-                    Dashboard SUPERVISOR
-                </IonTitle>
+<IonPage>
 
-            </IonContent>
 
-        </IonPage>
+<IonHeader>
 
-    );
+<IonToolbar>
+
+<IonTitle>
+Dashboard Supervisor
+</IonTitle>
+
+</IonToolbar>
+
+</IonHeader>
+
+
+
+<IonContent className="ion-padding">
+
+
+<h1>
+Bienvenido {user?.nombre}
+</h1>
+
+
+<p>
+Panel de supervisión
+</p>
+
+
+<ul>
+
+<li>
+Revisar asistencias
+</li>
+
+<li>
+Validar incidencias
+</li>
+
+<li>
+Consultar empleados
+</li>
+
+
+</ul>
+
+
+</IonContent>
+
+
+</IonPage>
+
+);
+
 
 };
 
