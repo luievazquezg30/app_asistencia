@@ -25,5 +25,7 @@ export interface Employee {
     password:string;
 
     rol:string;
+    
+    flotilla:string;
 
 }

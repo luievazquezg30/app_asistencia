@@ -8,7 +8,8 @@ export const employees:Employee[]=[
         nombre:"Juan Pérez",
         email:"juan@test.com",
         password:"123456",
-        rol:"empleado"
+        rol:"empleado",
+        flotilla:"Tecnocom"
     },
 
 
@@ -17,7 +18,8 @@ export const employees:Employee[]=[
         nombre:"María López",
         email:"maria@test.com",
         password:"123456",
-        rol:"supervisor"
+        rol:"supervisor",
+        flotilla:""
     },
 
 
@@ -26,7 +28,16 @@ export const employees:Employee[]=[
         nombre:"Carlos Ramírez",
         email:"carlos@test.com",
         password:"123456",
-        rol:"empleado"
+        rol:"empleado",
+        flotilla:"CyberPuerta"
+    },
+    {
+        id:4,
+        nombre:"Karime Jazmin",
+        email:"karime@test.com",
+        password:"123456",
+        rol:"empleado",
+        flotilla:"CyberPuerta"
     }
 
 ];

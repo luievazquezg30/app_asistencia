@@ -1,6 +1,23 @@
 import React, { useState } from "react"; 
-import { IonContent, IonPage, IonImg, IonCard, IonIcon, IonButton } from "@ionic/react";
-import { checkmarkOutline, logOutOutline, timeOutline, chevronForwardOutline, downloadOutline } from 'ionicons/icons';
+import { 
+  IonContent, 
+  IonPage, 
+  IonIcon, 
+  IonButton, 
+  IonCard,
+  IonTabBar, 
+  IonTabButton, 
+  IonLabel 
+} from "@ionic/react";
+import { 
+  checkmarkOutline, 
+  logOutOutline, 
+  timeOutline, 
+  chevronForwardOutline, 
+  downloadOutline, 
+  homeOutline, 
+  personOutline 
+} from 'ionicons/icons';
 import { attendanceMock } from "../../data/asistencias";
 import { users } from "../../data/users";
 import "./dashboard.css";
@@ -13,60 +30,61 @@ import incidente from "../../assets/img/danger-triangle-svgrepo-com.svg";
 
 const Dashboard: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
-  const currentUser = users.find((emp: any) => emp.id === 3);
+  
+  // Control de seguridad por si "users" o el ID no existen al renderizar
+  const currentUser = users?.find((emp: any) => emp.id === 3) || { nombre: "José Carlos", id: "XXXXXX" };
 
   const downloadPDF = () => {
-    const doc = new jsPDF();
- 
-    const records = attendanceMock.filter(item => item.employeeId === 1);
+    try {
+      const doc = new jsPDF();
+      const records = attendanceMock.filter(item => item.employeeId === 1);
 
-    doc.setFontSize(16);
-    doc.text("Historial de Asistencias", 14, 20);
-    doc.setFontSize(10);
-    doc.text(`Empleado ID: 1`, 14, 28);
-    doc.text(`Fecha de Reporte: ${new Date().toLocaleDateString()}`, 14, 34);
+      doc.setFontSize(16);
+      doc.text("Historial de Asistencias", 14, 20);
+      doc.setFontSize(10);
+      doc.text(`Empleado ID: 1`, 14, 28);
+      doc.text(`Fecha de Reporte: ${new Date().toLocaleDateString()}`, 14, 34);
 
-    const columns = ["Fecha", "Entrada", "Salida", "Estado"];
-    
-    const rows = records.map(item => [
-      item.date,
-      `${item.entryTime} hrs`,
-      item.exitTime ? `${item.exitTime} hrs` : "N/A",
-      item.status
-    ]);
+      const columns = ["Fecha", "Entrada", "Salida", "Estado"];
+      
+      const rows = records.map(item => [
+        item.date,
+        `${item.entryTime} hrs`,
+        item.exitTime ? `${item.exitTime} hrs` : "N/A",
+        item.status
+      ]);
 
-    autoTable(doc, {
-      startY: 40,
-      head: [columns],
-      body: rows,
-      theme: "striped",
-      headStyles: { fillColor: [67, 118, 199] } 
-    });
+      autoTable(doc, {
+        startY: 40,
+        head: [columns],
+        body: rows,
+        theme: "striped",
+        headStyles: { fillColor: [67, 118, 199] } 
+      });
 
-    doc.save(`Historial_Asistencias_Emp1.pdf`);
+      doc.save(`Historial_Asistencias_Emp1.pdf`);
+    } catch (error) {
+      console.error("Error generando PDF:", error);
+    }
   };
 
   return (
     <IonPage>
-      <IonContent fullscreen={true} scrollY={false}>
+      <IonContent fullscreen={true}>
         
         <div className="header">
-         <img src={logoTecno} alt="Logo" className="logo-superior-izq" />
+          <img src={logoTecno} alt="Logo" className="logo-superior-izq" />
           <div className="desc">
             <h2 className="ion-no-margin">Buen día,</h2>
-            <h1 className="ion-no-margin">
-              {currentUser ? currentUser.nombre : "José Carlos"}
-            </h1>
+            <h1 className="ion-no-margin">{currentUser.nombre}</h1>
             <div className="item-divider-replacer" />
-            <p className="subtitle">
-              Tu ID es: {currentUser ? currentUser.id : "XXXXXX"}
-            </p>
+            <p className="subtitle">Tu ID es: {currentUser.id}</p>
           </div>
         </div>
 
-        <div className="footer-container">
+        {/* Añadido un padding-bottom generoso para evitar solapamientos */}
+        <div className="footer-container" style={{ paddingBottom: '100px' }}> 
           <div className="container">
-            
             <IonCard className="plan-card ion-no-margin">
               <img src={avatarBatman} alt="Logo" className="avatar-img" />
               <div className="card-details">
@@ -108,7 +126,6 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
           
-
           <div className="container" style={{ marginTop: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <h6 style={{ margin: 0 }}>Historial de asistencias</h6>
@@ -122,59 +139,63 @@ const Dashboard: React.FC = () => {
               </IonButton>
             </div>
             
-            {attendanceMock.filter(item => item.employeeId === 1).length > 0 ? (
+            {attendanceMock && attendanceMock.filter(item => item.employeeId === 1).length > 0 ? (
               attendanceMock
                 .filter(item => item.employeeId === 1)
-                .map((item) => {
-                  return (
-                    <div 
-                      key={item.id} 
-                      style={{
-                        backgroundColor: '#f9f9f9',
-                        borderRadius: '8px',
-                        padding: '12px',
-                        marginBottom: '10px',
-                        borderLeft: item.status === 'Completa' ? '4px solid #2dd36f' : '4px solid #3880ff'
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                        <span style={{ fontWeight: 'bold', fontSize: '14px' }}>{item.date}</span>
-                        <span style={{ 
-                          fontSize: '12px', 
-                          fontWeight: '600',
-                          color: item.status === 'Completa' ? '#2dd36f' : '#3880ff' 
-                        }}>
-                          {item.status}
-                        </span>
-                      </div>
-                      
-                      <p style={{ margin: '0', fontSize: '13px', color: '#444' }}>
-                        <strong>Entrada:</strong> {item.entryTime} hrs
-                        {item.exitTime && <> | <strong>Salida:</strong> {item.exitTime} hrs</>}
-                      </p>
-                      <a href="#">Ver <IonIcon icon={chevronForwardOutline} style={{ fontSize: '10px' }} /></a>
+                .map((item) => (
+                  <div 
+                    key={item.id} 
+                    style={{
+                      backgroundColor: '#f9f9f9',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      marginBottom: '10px',
+                      borderLeft: item.status === 'Completa' ? '4px solid #2dd36f' : '4px solid #3880ff'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <span style={{ fontWeight: 'bold', fontSize: '14px' }}>{item.date}</span>
+                      <span style={{ 
+                        fontSize: '12px', 
+                        fontWeight: '600',
+                        color: item.status === 'Completa' ? '#2dd36f' : '#3880ff' 
+                      }}>
+                        {item.status}
+                      </span>
                     </div>
-                  );
-                  
-                })
+                    
+                    <p style={{ margin: '0', fontSize: '13px', color: '#444' }}>
+                      <strong>Entrada:</strong> {item.entryTime} hrs
+                      {item.exitTime && <> | <strong>Salida:</strong> {item.exitTime} hrs</>}
+                    </p>
+                    <a href="#">Ver <IonIcon icon={chevronForwardOutline} style={{ fontSize: '10px' }} /></a>
+                  </div>
+                ))
             ) : (
               <p style={{ fontSize: '14px', color: '#666', paddingBottom: '30px' }}>
                 No hay asistencias registradas.
               </p>
             )}
           </div>
-        
         </div>
 
         <AttendanceModal
           isOpen={showModal}
-          onClose={(confirm: boolean) => {
-            console.log("El usuario seleccionó:", confirm ? "Sí" : "No");
-            setShowModal(false);
-          }}
+          onClose={(confirm: boolean) => setShowModal(false)}
         />
-
       </IonContent>
+
+   
+      <IonTabBar slot="bottom" className="custom-tab-bar">
+        <IonTabButton tab="home" href="/home" className="custom-tab-btn">
+          <IonIcon icon={homeOutline} className="tab-icon" />
+        </IonTabButton>
+
+        <IonTabButton tab="perfil" href="/perfil" className="custom-tab-btn">
+          <IonIcon icon={personOutline} className="tab-icon" />
+        </IonTabButton>
+      </IonTabBar>
+
     </IonPage>
   );
 };
