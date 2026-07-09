@@ -1,0 +1,14 @@
+.attendance-modal {
+
+    --width: 90%;
+    --height: 70%;
+
+    --border-radius: 20px;
+
+}
+
+.attendance-modal ion-content {
+
+    --background: white;
+
+}

@@ -1,0 +1,48 @@
+.custom-attendance-modal {
+  --border-radius: 16px 16px 0 0; 
+  --background: #ffffff; 
+}
+
+.modal-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background-color: #ffffff; 
+  width: 100%;
+}
+
+.modal-title h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: center;
+  color: #000000; 
+}
+
+.button-group {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+}
+
+.button-group ion-button {
+  flex: 1;
+  margin: 0;
+  width: 15%;
+  height: 10%;
+}
+
+
+.btn-confirm {
+  --background: var(--ion-color-primary);
+  --color: #ffffff;
+}
+
+.btn-cancel {
+  --background: var(--ion-color-light, #f4f5f8);
+  --color: var(--ion-color-dark, #000000);
+}

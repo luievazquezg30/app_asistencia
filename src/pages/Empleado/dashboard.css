@@ -1,0 +1,248 @@
+ion-content {
+  --background: #ffffff;
+}
+
+.header {
+  position: relative;
+  background-image: linear-gradient(
+      rgba(10, 17, 32, 0.75), 
+      rgba(0, 0, 0, 0.85)
+    ), 
+    url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80'); 
+  background-size: cover;
+  background-position: center;
+  padding: 32px 24px 50px 24px;
+  color: #ffffff;
+}
+
+.header ion-img {
+  width: 100px;
+  margin-bottom: 30px;
+}
+
+.header h2 {
+  font-size: 26px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-top: 4px;
+  letter-spacing: -0.5px;
+}
+
+.item-divider-replacer {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  margin: 16px 0;
+  width: 60px;
+}
+
+.header .subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.footer-container {
+  background: #ffffff;
+  border-radius: 24px 24px 0 0;
+  margin-top: -24px;
+  position: relative;
+  z-index: 10;
+  padding: 24px 0;
+}
+
+.container {
+  padding: 0 20px;
+}
+
+.container h6 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 24px 0 14px 0;
+}
+
+.plan-card {
+  background: #edf4ff;
+  border-radius: 12px;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  margin: 0 0 10px 0;
+}
+
+.plan-card .avatar-img {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 16px;
+}
+
+.plan-card .card-details .plan-tag {
+  color: #dca725;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 2px 0;
+}
+
+.plan-card .card-details .title {
+  color: #122b5c;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.plan-card .card-details a {
+  color: #1a56db;
+  text-decoration: underline;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.attendance-actions {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 20px;
+  margin: 0 -20px;
+  scroll-linecap: outset;
+}
+
+.attendance-actions::-webkit-scrollbar {
+  display: none; 
+}
+
+.action-btn {
+  flex: 0 0 105px;
+  height: 95px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.action-btn.entrada {
+  border-color: #8ce897;
+  background: #f2fff4;
+}
+
+.action-btn.entrada ion-icon {
+  color: #22c55e;
+}
+
+.action-btn.entrada span {
+  color: #22c55e;
+}
+
+.action-btn.salida {
+  border-color: #fca5a5;
+  background: #fff5f5;
+}
+
+.action-btn.salida ion-icon {
+  color: #ef4444;
+}
+
+.action-btn.salida span {
+  color: #ef4444;
+}
+
+.action-btn.disabled {
+  background: #f7fafc;
+  border-color: #e2e8f0;
+}
+
+.action-btn.disabled ion-icon, .action-btn.disabled span {
+  color: #64748b;
+}
+
+.action-btn ion-icon {
+  font-size: 26px;
+}
+
+.action-btn span {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+
+.horizontal-carousel {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 4px 20px;
+  margin: 0 -20px;
+}
+
+.horizontal-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-card {
+  flex: 0 0 280px;
+  background: #eff4ff;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.carousel-card img {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.carousel-card .info h7 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+  margin: 0;
+  display: block;
+}
+
+.carousel-card .info p {
+  font-size: 11px;
+  color: #64748b;
+  margin: 4px 0;
+  line-height: 1.3;
+}
+
+.carousel-card .info a {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e40af;
+  text-decoration: none;
+}
+
+.logo-superior-izq {
+  position: absolute;  
+  top: 20px;          
+  left: 15px;          
+  width: 120px;         
+  height: auto;        
+}
+
+.incidente-img {
+  width: 5%;
+  height: 5%;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 16px;
+}

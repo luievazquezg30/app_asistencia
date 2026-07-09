@@ -4,6 +4,9 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 
 import { initStorage } from './storages/Storage';
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
+
+defineCustomElements(window);
 
 initStorage().then(() => {
 
