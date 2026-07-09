@@ -1,4 +1,4 @@
-import React, { useState } from "react"; 
+import React, { useState, useEffect } from "react"; 
 import { 
   IonContent, 
   IonPage, 
@@ -9,59 +9,78 @@ import {
   IonTabButton 
 } from "@ionic/react";
 import { 
-  timeOutline, 
   chevronForwardOutline, 
   chevronDownOutline,
   downloadOutline, 
   homeOutline, 
   personOutline 
 } from 'ionicons/icons';
-import { useHistory } from "react-router-dom"; // Hook para la redirección
-import { attendanceMock } from "../../data/asistencias";
-import { employees } from "../../data/cuadrillas"; 
-import "./dashboard.css";
-import AttendanceModal from "../../components/inicarJornadaModal";
+
+// RUTAS RELATIVAS
+import { attendanceMock } from "../data/asistencias";
+import { employees } from "../data/cuadrillas"; 
+import logoTecno from "../assets/img/Logo-C3uYQGLX.png";
+import avatarBatman from "../assets/img/avatar-batman-comics-svgrepo-com.svg";
+
+// 1. IMPORTACIÓN DEL MODAL INTEGRADO
+import VisualizarImagenFlotillaModal from "../components/visualizarImagenFlotillaModal"; 
+
+// RUTA DEL CSS ADAPTADA
+import "../components/visualizarImagenFlotillaModal.css"; 
+
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import logoTecno from "../../assets/img/Logo-C3uYQGLX.png";
-import avatarBatman from "../../assets/img/avatar-batman-comics-svgrepo-com.svg";
-import incidente from "../../assets/img/danger-triangle-svgrepo-com.svg";
 
-const Dashboard: React.FC = () => {
-  const history = useHistory(); // Instancia de history para navegar
-  const [showModal, setShowModal] = useState(false);
-  const [selectedFleet, setSelectedFleet] = useState<string>(""); 
-  
-  // Estados para manejo de filtros y menú desplegable
+const VisualizarFlotilla: React.FC = () => {
+  // Cambia aquí la flotilla por defecto que quieres ver ("Tecnocom" o "CyberPuerta")
+  const [currentFleet, setCurrentFleet] = useState<string>("Tecnocom");
+
+  // Estados para filtros por fecha, menús e imagen Base64
   const [isFilterEnabled, setIsFilterEnabled] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [storedImage, setStoredImage] = useState<string | null>(null);
   
+  // 2. NUEVO ESTADO PARA CONTROLAR LA APERTURA DEL MODAL
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  // Carga la foto guardada en localStorage
+  useEffect(() => {
+    const base64Image = localStorage.getItem("empleado_foto_base64");
+    if (base64Image) {
+      setStoredImage(base64Image);
+    }
+  }, []);
+
+  // Buscamos a María López (ID: 2) para el encabezado
   const currentUser = employees?.find((emp) => emp.id === 2) || { 
     id: 999,
     nombre: "Usuario Temporal", 
     rol: "empleado", 
-    flotilla: "Tecnocom" 
+    flotilla: "" 
   };
 
-  const userFleets: string[] = currentUser.rol === "supervisor"
-    ? [...new Set(employees.map(emp => emp.flotilla).filter(f => f !== ""))]
-    : currentUser.flotilla ? [currentUser.flotilla] : [];
+  // 1. FILTRADO POR LA FLOTILLA SELECCIONADA (Tecnocom o CyberPuerta)
+  const attendanceByFleet = attendanceMock.filter(item => {
+    const emp = employees.find(e => e.id === item.employeeId);
+    return emp?.flotilla?.toLowerCase() === currentFleet.toLowerCase();
+  });
 
+  // 2. FILTRADO ADICIONAL POR FECHA ESPECÍFICA (Si el checkbox está activo)
   const filteredAttendance = isFilterEnabled
-    ? attendanceMock.filter(item => item.date === selectedDate)
-    : attendanceMock;
+    ? attendanceByFleet.filter(item => item.date === selectedDate)
+    : attendanceByFleet;
 
+  // Exportación a PDF de los registros
   const downloadPDF = () => {
     try {
       const doc = new jsPDF();
       const records = filteredAttendance;
 
       doc.setFontSize(16);
-   
       const tituloReporte = isFilterEnabled 
-        ? `Asistencias del Día: ${selectedDate}` 
-        : "Historial General de Asistencias";
+        ? `Asistencias Flotilla ${currentFleet} - Día: ${selectedDate}` 
+        : `Historial General - Flotilla: ${currentFleet}`;
         
       doc.text(tituloReporte, 14, 20);
       
@@ -91,25 +110,17 @@ const Dashboard: React.FC = () => {
         headStyles: { fillColor: [67, 118, 199] } 
       });
 
-      const nombreArchivo = isFilterEnabled 
-        ? `Asistencias_${selectedDate}.pdf` 
-        : "Historial_General_Asistencias.pdf";
-
-      doc.save(nombreArchivo);
+      doc.save(`Asistencias_Flotilla_${currentFleet}.pdf`);
     } catch (error) {
       console.error("Error generando PDF:", error);
     }
-  };
-
-  // FUNCIÓN MODIFICADA: Ahora redirige pasando el estado con el nombre de la flotilla
-  const handleFleetAction = (fleetName: string) => {
-    history.push("/visualizarFlotilla", { fleet: fleetName });
   };
 
   return (
     <IonPage>
       <IonContent fullscreen={true}>
         
+        {/* ENCABEZADO SUPERIOR */}
         <div className="header">
           <img src={logoTecno} alt="Logo" className="logo-superior-izq" />
           <div className="desc">
@@ -120,47 +131,45 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
+        {/* CONTENEDOR PRINCIPAL */}
         <div className="footer-container"> 
           <div className="container">
+            
+            {/* BOTONES SELECTORES DE FLOTILLA */}
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+              <IonButton 
+                fill={currentFleet === "Tecnocom" ? "solid" : "outline"} 
+                size="small"
+                onClick={() => setCurrentFleet("Tecnocom")}
+                style={{ '--background': '#062b65' }}
+              >
+                Tecnocom
+              </IonButton>
+              <IonButton 
+                fill={currentFleet === "CyberPuerta" ? "solid" : "outline"} 
+                size="small"
+                onClick={() => setCurrentFleet("CyberPuerta")}
+                style={{ '--background': '#062b65', '--color': currentFleet === "CyberPuerta" ? '#fff' : '#4376c7' }}
+              >
+                CyberPuerta
+              </IonButton>
+            </div>
+
+            {/* TARJETA: SOLO MUESTRA EL AVATAR Y LA FLOTILLA FILTRADA */}
             <IonCard className="plan-card ion-no-margin">
-              <img src={avatarBatman} alt="Logo" className="avatar-img" />
+              <img 
+                src={storedImage ? storedImage : avatarBatman} 
+                alt="Foto del colaborador" 
+                className="avatar-img" 
+              />
               <div className="card-details">
-                <p className="plan-tag">
-                  Rol: {currentUser.rol}
+                <p className="title" style={{ marginTop: '4px' }}>
+                  Flotilla: {currentFleet}
                 </p>
-                <p className="title">Flotillas bajo gestión: </p>
-                <div className="flotillas">
-                  {userFleets.length > 0 ? (
-                    userFleets.map((fleet, index) => <p key={index}>• {fleet}</p>)
-                  ) : (
-                    <p>Sin flotillas asignadas</p>
-                  )}
-                </div>
               </div>
             </IonCard>
 
-            <h6>Gestor de Flotillas</h6>
-
-            <div className="attendance-actions">
-              {userFleets.length > 0 ? (
-                userFleets.map((fleet, index) => (
-                  <div 
-                    key={index} 
-                    className="action-btn entrada" 
-                    onClick={() => handleFleetAction(fleet)}
-                  >
-                    <span>Gestionar {fleet}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="action-btn disabled">
-                  <IonIcon icon={timeOutline} />
-                  <span>No tienes flotillas activas</span>
-                </div>
-              )}
-            </div>
-
-            {/* SECCIÓN FILTRO POR FECHA (MÓDULO DESPLEGABLE) */}
+            {/* SECCIÓN FILTRO POR FECHA */}
             <div className="date-filter-box">
               <div className="date-filter-header">
                 <label className="date-filter-label">
@@ -188,7 +197,7 @@ const Dashboard: React.FC = () => {
                 )}
               </div>
 
-              {/* Menú Desplegable */}
+              {/* Selector del Desplegable */}
               {isFilterEnabled && (
                 <div className="dropdown-trigger-bar" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                   <span className="dropdown-trigger-text">
@@ -198,13 +207,22 @@ const Dashboard: React.FC = () => {
                 </div>
               )}
 
+              {/* Lista Desplegable */}
               {isFilterEnabled && isDropdownOpen && (
                 <div className="dropdown-content-list">
                   {filteredAttendance.length > 0 ? (
                     filteredAttendance.map((item) => {
                       const empleado = employees.find(emp => emp.id === item.employeeId);
                       return (
-                        <div key={item.id} className="dropdown-item-card" style={{ borderLeft: item.status === 'Completa' ? '4px solid #2dd36f' : '4px solid #3880ff' }}>
+                        <div 
+                          key={item.id} 
+                          className="dropdown-item-card" 
+                          style={{ 
+                            borderLeft: item.status === 'Completa' ? '4px solid #2dd36f' : '4px solid #3880ff',
+                            cursor: 'pointer' 
+                          }}
+                          onClick={() => setIsModalOpen(true)} // 3. ACTIVA EL MODAL DESDE EL DESPLEGABLE
+                        >
                           <div className="date-filter-header">
                             <span className="dropdown-trigger-text" style={{ fontWeight: 'bold', color: '#1a1a1a' }}>
                               {empleado ? empleado.nombre : `ID: ${item.employeeId}`}
@@ -228,10 +246,9 @@ const Dashboard: React.FC = () => {
               )}
             </div>
 
-            {/* SECCIÓN DEL BOTÓN DE DESCARGA ADAPTADO CON ESTILO INLINE REQUERIDO */}
             <div className="date-filter-header" style={{ marginTop: '24px', marginBottom: '12px' }}>
               <h6 style={{ margin: 0 }}>
-                {isFilterEnabled ? "Todos los Registros Filtrados" : "Historial General de la Empresa"}
+                {isFilterEnabled ? "Registros Filtrados" : `Historial General - ${currentFleet}`}
               </h6>
               <IonButton 
                 fill="clear" 
@@ -244,7 +261,7 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* LISTADO PRINCIPAL DINÁMICO */}
+          {/* LISTADO DE ASISTENCIAS FILTRADAS */}
           <div className="container">
             {filteredAttendance && filteredAttendance.length > 0 ? (
               filteredAttendance.map((item) => {
@@ -256,8 +273,10 @@ const Dashboard: React.FC = () => {
                     style={{ 
                       padding: '12px', 
                       backgroundColor: '#f9f9f9',
-                      borderLeft: item.status === 'Completa' ? '4px solid #2dd36f' : '4px solid #3880ff' 
+                      borderLeft: item.status === 'Completa' ? '4px solid #2dd36f' : '4px solid #3880ff',
+                      cursor: 'pointer' // Cambio estético para notar que es interactivo
                     }}
+                    onClick={() => setIsModalOpen(true)} // 4. ACTIVA EL MODAL DESDE LA LISTA PRINCIPAL
                   >
                     <div className="date-filter-header" style={{ marginBottom: '6px' }}>
                       <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#1a1a1a' }}>
@@ -277,29 +296,29 @@ const Dashboard: React.FC = () => {
               })
             ) : (
               <p className="dropdown-trigger-text" style={{ paddingBottom: '30px', paddingLeft: '20px' }}>
-                No hay asistencias registradas.
+                No hay asistencias registradas para la flotilla {currentFleet}.
               </p>
             )}
           </div>
         </div>
-      </IonContent >
-      
+      </IonContent>
+
+      {/* 5. ELEMENTO INYECTADO SIN RENDERIZAR INTERRUPCIONES VISUALES */}
+      <VisualizarImagenFlotillaModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
+
       <IonTabBar slot="bottom" className="custom-tab-bar">
         <IonTabButton tab="home" href="/home" className="custom-tab-btn">
           <IonIcon icon={homeOutline} className="tab-icon" />
         </IonTabButton>
-
         <IonTabButton tab="perfil" href="/perfil" className="custom-tab-btn">
           <IonIcon icon={personOutline} className="tab-icon" />
         </IonTabButton>
       </IonTabBar>
-
-      <AttendanceModal
-        isOpen={showModal}
-        onClose={(confirm: boolean) => setShowModal(false)}
-      />
     </IonPage>
   );
 };
 
-export default Dashboard;
+export default VisualizarFlotilla;
