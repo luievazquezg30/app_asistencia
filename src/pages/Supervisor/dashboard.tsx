@@ -29,8 +29,12 @@ import avatarBatman from "../../assets/img/avatar-batman-comics-svgrepo-com.svg"
 const Dashboard: React.FC = () => {
   const history = useHistory(); 
   const [showModal, setShowModal] = useState(false);
+  
+  // Helper para las fechas iniciales
   const todayStr = new Date().toISOString().split('T')[0];
   const firstDayOfMonthStr = `${todayStr.slice(0, 7)}-01`;
+
+  // Estados de control de filtros
   const [isFilterEnabled, setIsFilterEnabled] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<string>(firstDayOfMonthStr);
   const [endDate, setEndDate] = useState<string>(todayStr);
@@ -49,6 +53,7 @@ const Dashboard: React.FC = () => {
     ? [...new Set(employees.map(emp => emp.flotilla).filter(f => f !== ""))]
     : currentUser.flotilla ? [currentUser.flotilla] : [];
 
+  // --- LÓGICA DE FILTRADO COMBINADO (FILTRACIÓN AVANZADA) ---
   const filteredAttendance = attendanceMock.filter(item => {
     if (!isFilterEnabled) return true;
 
@@ -61,7 +66,8 @@ const Dashboard: React.FC = () => {
     return matchDateRange && matchUser && matchFleet;
   });
 
-  
+  // --- FUNCIÓN GENERAL PARA GENERAR EL PDF ---
+  // Recibe por parámetro qué lista de registros va a pintar (pueden ser los filtrados o todos)
   const generatePDF = (records: typeof attendanceMock, isAdvancedFilter: boolean) => {
     try {
       const doc = new jsPDF();
@@ -76,7 +82,7 @@ const Dashboard: React.FC = () => {
       doc.text(`Generado por: ${currentUser.nombre} (ID: ${currentUser.id})`, 14, 28);
       doc.text(`Fecha de Reporte: ${new Date().toLocaleDateString()}`, 14, 34);
 
-     
+      // Si es de la filtración avanzada, añadimos el desglose de los filtros arriba de la tabla
       if (isAdvancedFilter) {
         const empFiltrado = employees.find(e => e.id.toString() === selectedUser);
         const textoUsuario = empFiltrado ? empFiltrado.nombre : 'Todos';
@@ -172,6 +178,7 @@ const Dashboard: React.FC = () => {
               )}
             </div>
 
+            {/* SECCIÓN DE FILTROS AVANZADOS */}
             <div className="date-filter-box">
               <div className="date-filter-header">
                 <label className="date-filter-label">
@@ -193,7 +200,8 @@ const Dashboard: React.FC = () => {
 
               {isFilterEnabled && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
-            
+                  
+                  {/* Filtro de Rango de Fechas */}
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                       <span style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Desde:</span>
@@ -221,6 +229,7 @@ const Dashboard: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* Filtro por Colaborador */}
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Colaborador:</span>
                     <select 
@@ -238,6 +247,7 @@ const Dashboard: React.FC = () => {
                     </select>
                   </div>
 
+                  {/* Filtro por Flotilla */}
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Flotilla:</span>
                     <select 
@@ -258,6 +268,7 @@ const Dashboard: React.FC = () => {
                 </div>
               )}
 
+              {/* BARRA DESPLEGABLE CON SU PROPIO BOTÓN DE DESCARGA EXCLUSIVO */}
               {isFilterEnabled && (
                 <div className="date-filter-header" style={{ marginTop: '14px', backgroundColor: '#f2f2f2', padding: '6px 10px', borderRadius: '6px' }}>
                   <div className="dropdown-trigger-bar" onClick={() => setIsDropdownOpen(!isDropdownOpen)} style={{ flex: 1, border: 'none', margin: 0, padding: 0 }}>
@@ -267,12 +278,12 @@ const Dashboard: React.FC = () => {
                     <IonIcon icon={isDropdownOpen ? chevronDownOutline : chevronForwardOutline} style={{ marginLeft: '6px' }} />
                   </div>
                   
-                 
+                  {/* NUEVO BOTÓN: Descarga directa y única de la filtración avanzada */}
                   <IonButton 
                     fill="clear" 
                     size="small" 
                     onClick={(e) => {
-                      e.stopPropagation();
+                      e.stopPropagation(); // Evita que se abra/cierre el menú al hacer click en descargar
                       generatePDF(filteredAttendance, true);
                     }}
                     style={{ '--color': '#4376c7', margin: 0, padding: 0 }}
@@ -313,6 +324,7 @@ const Dashboard: React.FC = () => {
               )}
             </div>
 
+            {/* SECCIÓN DEL BOTÓN DE DESCARGA INFERIOR (HISTORIAL GENERAL) */}
             <div className="date-filter-header" style={{ marginTop: '24px', marginBottom: '12px' }}>
               <h6 style={{ margin: 0 }}>Historial de Asistencias en Pantalla</h6>
               <IonButton 
@@ -326,6 +338,7 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
 
+          {/* LISTADO PRINCIPAL DINÁMICO */}
           <div className="container">
             {filteredAttendance && filteredAttendance.length > 0 ? (
               filteredAttendance.map((item) => {

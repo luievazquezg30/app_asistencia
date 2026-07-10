@@ -19,7 +19,7 @@ export const employees:Employee[]=[
         email:"maria@test.com",
         password:"123456",
         rol:"supervisor",
-        flotilla:"CyberPuerta"
+        flotilla:""
     },
 
 
@@ -38,13 +38,6 @@ export const employees:Employee[]=[
         password:"123456",
         rol:"empleado",
         flotilla:"CyberPuerta"
-    },
-    {
-        id:5,
-        nombre:"Celeste Jazmin",
-        email:"celeste@test.com",
-        password:"123456",
-        rol:"supervisor",
-        flotilla:"Tecnocom"
-    },
+    }
+
 ];

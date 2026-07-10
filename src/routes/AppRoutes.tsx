@@ -8,7 +8,7 @@ import EmpleadoDashboard from "../pages/Empleado/dashboard";
 import RegistrarUbicacion from "../components/registrarUbicacion"; 
 import VisualizarFlotilla from "../components/visualizarFlotilla"; 
 
-import NotFound from "../Shared/notFound";
+import NotFound from "../shared/notFound";
 import TomarAsistencia from "../components/tomarAsistencia";
 import VisualizarImagenFlotilla from "../components/visualizarImagenFlotilla";
 

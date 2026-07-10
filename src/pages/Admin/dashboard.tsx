@@ -107,6 +107,7 @@ const Dashboard: React.FC = () => {
               )) : <div className="action-btn disabled"><span>No tienes flotillas activas</span></div>}
             </div>
 
+            {/* SECCIÓN NUEVA: GESTOR DE SUPERVISORES */}
             <div className="container" style={{ marginTop: '24px' }}>
               <h6>Gestión de Supervisores</h6>
               <IonCard className="ion-padding" style={{ borderRadius: '12px', margin: '0' }}>
@@ -125,7 +126,7 @@ const Dashboard: React.FC = () => {
               </IonCard>
             </div>
 
-        
+            {/* FILTROS Y LISTADO EXISTENTE */}
             <div className="date-filter-box">
               <div className="date-filter-header">
                 <label className="date-filter-label">
