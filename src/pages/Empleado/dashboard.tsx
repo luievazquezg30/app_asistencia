@@ -27,8 +27,10 @@ import autoTable from "jspdf-autotable";
 import logoTecno from "../../assets/img/Logo-C3uYQGLX.png";
 import avatarBatman from "../../assets/img/avatar-batman-comics-svgrepo-com.svg";
 import incidente from "../../assets/img/danger-triangle-svgrepo-com.svg";
+import { useHistory } from "react-router";
 
 const Dashboard: React.FC = () => {
+   const history = useHistory(); 
   const [showModal, setShowModal] = useState(false);
   
   const currentUser = users?.find((emp: any) => emp.id === 3) || { nombre: "José Carlos", id: "XXXXXX" };
@@ -185,14 +187,17 @@ const Dashboard: React.FC = () => {
 
    
       <IonTabBar slot="bottom" className="custom-tab-bar">
-        <IonTabButton tab="home" href="/home" className="custom-tab-btn">
-          <IonIcon icon={homeOutline} className="tab-icon" />
-        </IonTabButton>
-
-        <IonTabButton tab="perfil" href="/perfil" className="custom-tab-btn">
-          <IonIcon icon={personOutline} className="tab-icon" />
-        </IonTabButton>
-      </IonTabBar>
+              <IonTabButton 
+                tab="home" 
+                onClick={() => history.push("/supervisor")} 
+                className="custom-tab-btn"
+              >
+                <IonIcon icon={homeOutline} className="tab-icon" />
+              </IonTabButton>
+              <IonTabButton tab="perfil" onClick={() => history.push("/login")}  className="custom-tab-btn">
+                <IonIcon icon={personOutline} className="tab-icon" />
+              </IonTabButton>
+            </IonTabBar>
 
     </IonPage>
   );

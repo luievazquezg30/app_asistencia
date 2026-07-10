@@ -117,8 +117,27 @@ ion-button.back-btn {
 }
 
 .btn-ready {
-  --background: #3b82f6;
+  background: #19a827;
+  text-align: center;
+  padding-top: 5%;
+  padding-bottom: 5%;
+  padding-left: 40%;
+  padding-right: 40%;
   --border-radius: 10px;
-  font-weight: 600;
-  margin: 0;
+  color: white;
+  width: 100%;
+  
+}
+
+.btn-ready {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-width: 60px;
+  background: #2dd36f !important;
+  color: white !important;
+  border-radius: 10px !important;
+  padding: 10px 20px !important;
+  white-space: nowrap !important;
 }

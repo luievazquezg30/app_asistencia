@@ -29,7 +29,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 const VisualizarFlotilla: React.FC = () => {
-  // Inicializamos el hook history
+
   const history = useHistory(); 
 
   const [currentFleet, setCurrentFleet] = useState<string>("Tecnocom");
@@ -305,7 +305,7 @@ const VisualizarFlotilla: React.FC = () => {
         >
           <IonIcon icon={homeOutline} className="tab-icon" />
         </IonTabButton>
-        <IonTabButton tab="perfil" href="/perfil" className="custom-tab-btn">
+        <IonTabButton tab="perfil" onClick={() => history.push("/login")}  className="custom-tab-btn">
           <IonIcon icon={personOutline} className="tab-icon" />
         </IonTabButton>
       </IonTabBar>

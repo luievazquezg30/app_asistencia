@@ -16,27 +16,31 @@ const AttendanceModal: React.FC<AttendanceModalProps> = ({ isOpen, onClose }) =>
   };
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={() => onClose(false)} className="custom-attendance-modal">
+    <IonModal 
+      isOpen={isOpen} 
+      onDidDismiss={() => onClose(false)} 
+      className="custom-attendance-modal"
+    >
       <div className="modal-container">
         <IonText className="modal-title">
           <h2>¿Quieres iniciar tu jornada?</h2>
         </IonText>
+        
         <div className="button-group">
-          <IonButton 
-            expand="block" 
+          <a 
+            
             className="btn-confirm"
             onClick={goToRegisterUbi}
           >
-            Sí
-          </IonButton>
+            SI
+          </a>
           
-          <IonButton 
-            expand="block" 
+          <a 
             className="btn-cancel"
             onClick={() => onClose(false)}
           >
             No
-          </IonButton>
+          </a>
         </div>
       </div>
     </IonModal>

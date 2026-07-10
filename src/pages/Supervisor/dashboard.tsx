@@ -284,15 +284,18 @@ const Dashboard: React.FC = () => {
         </div>
       </IonContent >
       
-      <IonTabBar slot="bottom" className="custom-tab-bar">
-        <IonTabButton tab="home" href="/home" className="custom-tab-btn">
-          <IonIcon icon={homeOutline} className="tab-icon" />
-        </IonTabButton>
-
-        <IonTabButton tab="perfil" href="/perfil" className="custom-tab-btn">
-          <IonIcon icon={personOutline} className="tab-icon" />
-        </IonTabButton>
-      </IonTabBar>
+       <IonTabBar slot="bottom" className="custom-tab-bar">
+              <IonTabButton 
+              tab="home" 
+              onClick={() => history.push("/supervisor")} 
+              className="custom-tab-btn"
+          >
+              <IonIcon icon={homeOutline} className="tab-icon" />
+          </IonTabButton>
+          <IonTabButton tab="perfil" onClick={() => history.push("/login")}  className="custom-tab-btn">
+              <IonIcon icon={personOutline} className="tab-icon" />
+          </IonTabButton>
+        </IonTabBar>
 
       <AttendanceModal
         isOpen={showModal}

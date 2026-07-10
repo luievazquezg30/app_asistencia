@@ -1,8 +1,34 @@
+/* ============================================================
+   ESTILOS GLOBALES PARA EL ION-MODAL
+   ============================================================ */
 .custom-attendance-modal {
-  --border-radius: 16px 16px 0 0; 
-  --background: #ffffff; 
+  /* 1. Opacidad del fondo oscura */
+  --backdrop-opacity: 0.6;
+
+  /* 2. Variables nativas de Ionic para forzar el tamaño y comportamiento de alerta flotante */
+  --width: 85%;
+  --max-width: 340px;
+  --height: auto;
+  --border-radius: 16px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+
+.custom-attendance-modal::part(content) {
+  position: relative;
+  margin-top: 100%;
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+/* ============================================================
+   CONTENEDOR INTERNO DE TU COMPONENTE
+   ============================================================ */
 .modal-container {
   padding: 24px;
   display: flex;
@@ -11,13 +37,12 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  background-color: #ffffff; 
   width: 100%;
 }
 
 .modal-title h2 {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 600;
   text-align: center;
   color: #000000; 
@@ -32,17 +57,26 @@
 .button-group ion-button {
   flex: 1;
   margin: 0;
-  width: 15%;
-  height: 10%;
+  height: 44px;
+  font-weight: 600;
 }
 
 
 .btn-confirm {
-  --background: var(--ion-color-primary);
-  --color: #ffffff;
+  background: #2dd36f !important;
+  --background-activated: #28ba62 !important; 
+  color: #ffffff !important;
+  width: 50%; 
+  text-align: center;
+  padding-top: 5%;
 }
 
+
 .btn-cancel {
-  --background: var(--ion-color-light, #f4f5f8);
-  --color: var(--ion-color-dark, #000000);
+  background: #eb445a;
+  --background-activated: #cf3c4f; 
+  color: #ffffff;
+  width: 50%; 
+  text-align: center;
+  padding-top: 5%;
 }
