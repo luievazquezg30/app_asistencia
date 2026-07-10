@@ -9,6 +9,8 @@ import RegistrarUbicacion from "../components/registrarUbicacion";
 import VisualizarFlotilla from "../components/visualizarFlotilla"; 
 
 import NotFound from "../Shared/notFound";
+import TomarAsistencia from "../components/tomarAsistencia";
+import VisualizarImagenFlotilla from "../components/visualizarImagenFlotilla";
 
 const AppRoutes = () => {
     return (
@@ -54,6 +56,18 @@ const AppRoutes = () => {
                 path="/visualizarFlotilla/:nombreFlotilla" 
                 component={VisualizarFlotilla} 
             />
+
+            <Route 
+                exact 
+                path="/tomarAsistencia" 
+                component={TomarAsistencia} 
+            />
+            <Route
+             exact 
+             path="/visualizarImagenFlotilla/:id" 
+             component={VisualizarImagenFlotilla} 
+             />
+
 
             <Route
                 exact

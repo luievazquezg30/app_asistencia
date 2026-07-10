@@ -31,7 +31,6 @@ import incidente from "../../assets/img/danger-triangle-svgrepo-com.svg";
 const Dashboard: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   
-  // Control de seguridad por si "users" o el ID no existen al renderizar
   const currentUser = users?.find((emp: any) => emp.id === 3) || { nombre: "José Carlos", id: "XXXXXX" };
 
   const downloadPDF = () => {
@@ -82,7 +81,6 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Añadido un padding-bottom generoso para evitar solapamientos */}
         <div className="footer-container" style={{ paddingBottom: '100px' }}> 
           <div className="container">
             <IonCard className="plan-card ion-no-margin">

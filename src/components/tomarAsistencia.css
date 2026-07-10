@@ -1,0 +1,41 @@
+.attendance-capture-content { --background: #0040ff; }
+.attendance-bg-gradient { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at 50% 30%, #1c355e 0%, #0b132b 80%); }
+
+.capture-container { position: relative; display: flex; flex-direction: column; height: 100%; padding: 24px 20px; }
+
+.capture-header { text-align: center; margin-top: 20px; }
+.capture-title { color: #fff; font-size: 24px; font-weight: 800; }
+
+.camera-viewfinder-wrapper { display: flex; justify-content: center; margin-top: 40px; margin-bottom: 35px; }
+.viewfinder-frame { position: relative; width: 290px; height: 380px; border-radius: 28px; overflow: hidden; background-color: #111a33; }
+.active-frame { border: 3px solid #219537; }
+.success-frame { border: 3px solid #144929; }
+.live-video-feed, .captured-preview-img { width: 100%; height: 100%; object-fit: cover; }
+
+.capture-actions-panel { 
+  width: 100%; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center;
+  margin-top: 10px; 
+}
+
+.btn-capture-green {
+
+  --background: #e6fff0 !important;
+  --background-activated: #33c46d !important;
+  --color: #ffffff !important;
+  --border-radius: 20px;
+  font-size: 22px !important;
+  font-weight: 800;
+  --width: 100% !important;
+  margin: 0 auto;
+  box-shadow: 0 8px 25px rgba(3, 255, 104, 0.3);
+
+}
+
+
+.action-dual-buttons { display: flex; gap: 15px; width: 100%; max-width: 340px; justify-content: center; }
+.btn-capture-secondary { --border-radius: 20px; width: 70px; height: 68px; }
+.btn-capture-success { --background: #2dd36f; --border-radius: 20px; height: 68px; flex: 1; font-size: 16px; font-weight: 700; }

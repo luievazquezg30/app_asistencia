@@ -66,14 +66,14 @@ const MapPage: React.FC = () => {
             <p>Av. Paseo del Atlántico 1472, Mazatlán, Sinaloa, MX</p>
           </div>
 
-          <IonButton 
-            className="btn-ready" 
-            expand="block" 
-            disabled={step < 3} 
-            onClick={handleBack}
-          >
-            Listo
-          </IonButton>
+            <IonButton 
+                className="btn-ready" 
+                expand="block" 
+                disabled={step < 3} 
+                routerLink="/tomarAsistencia"
+                >
+                Listo
+            </IonButton>
         </div>
 
       </IonContent>

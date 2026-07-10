@@ -35,7 +35,7 @@ export const attendanceMock:Attendance[]=[
 
 {
     id:4,
-    employeeId:3,
+    employeeId:4,
     date:"2026-07-07",
     entryTime:"08:15",
     exitTime:"17:00",
@@ -43,11 +43,19 @@ export const attendanceMock:Attendance[]=[
 },
 {
     id:5,
-    employeeId:3,
+    employeeId:4,
     date:"2026-07-07",
     entryTime:"08:15",
     exitTime:"",
     status:"En curso"
+},
+{
+    id:6,
+    employeeId:4,
+    date:"2026-07-07",
+    entryTime:"08:15",
+    exitTime:"20:15",
+    status:"Completa"
 }
 
 
