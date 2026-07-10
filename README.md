@@ -12,7 +12,7 @@ Aplicación diseñada para la gestión y registro eficiente de asistencia, const
 
 ## 1. Instrucciones de Instalación
 
-Para ejecutar este proyecto en tu entorno local, asegúrate de tener instalado [Node.js](https://nodejs.org/) (versión LTS recomendada).
+Para ejecutar este proyecto en tu entorno local, asegúrate de tener instalado [Ionic](npm install -g @ionic/cli).
 
 1. **Clonar el repositorio:**
    ```bash
