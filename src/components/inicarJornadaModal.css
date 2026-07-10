@@ -1,11 +1,6 @@
-/* ============================================================
-   ESTILOS GLOBALES PARA EL ION-MODAL
-   ============================================================ */
 .custom-attendance-modal {
-  /* 1. Opacidad del fondo oscura */
   --backdrop-opacity: 0.6;
 
-  /* 2. Variables nativas de Ionic para forzar el tamaño y comportamiento de alerta flotante */
   --width: 85%;
   --max-width: 340px;
   --height: auto;
@@ -26,9 +21,6 @@
   overflow: hidden;
 }
 
-/* ============================================================
-   CONTENEDOR INTERNO DE TU COMPONENTE
-   ============================================================ */
 .modal-container {
   padding: 24px;
   display: flex;

@@ -16,7 +16,7 @@ import {
   homeOutline, 
   personOutline 
 } from 'ionicons/icons';
-import { useHistory } from "react-router-dom"; // Hook para la redirección
+import { useHistory } from "react-router-dom"; 
 import { attendanceMock } from "../../data/asistencias";
 import { employees } from "../../data/cuadrillas"; 
 import "./dashboard.css";
@@ -25,16 +25,17 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import logoTecno from "../../assets/img/Logo-C3uYQGLX.png";
 import avatarBatman from "../../assets/img/avatar-batman-comics-svgrepo-com.svg";
-import incidente from "../../assets/img/danger-triangle-svgrepo-com.svg";
 
 const Dashboard: React.FC = () => {
-  const history = useHistory(); // Instancia de history para navegar
+  const history = useHistory(); 
   const [showModal, setShowModal] = useState(false);
-  const [selectedFleet, setSelectedFleet] = useState<string>(""); 
-  
-  // Estados para manejo de filtros y menú desplegable
+  const todayStr = new Date().toISOString().split('T')[0];
+  const firstDayOfMonthStr = `${todayStr.slice(0, 7)}-01`;
   const [isFilterEnabled, setIsFilterEnabled] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState<string>(firstDayOfMonthStr);
+  const [endDate, setEndDate] = useState<string>(todayStr);
+  const [selectedUser, setSelectedUser] = useState<string>(""); 
+  const [selectedFleetFilter, setSelectedFleetFilter] = useState<string>(""); 
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   
   const currentUser = employees?.find((emp) => emp.id === 2) || { 
@@ -48,29 +49,43 @@ const Dashboard: React.FC = () => {
     ? [...new Set(employees.map(emp => emp.flotilla).filter(f => f !== ""))]
     : currentUser.flotilla ? [currentUser.flotilla] : [];
 
-  const filteredAttendance = isFilterEnabled
-    ? attendanceMock.filter(item => item.date === selectedDate)
-    : attendanceMock;
+  const filteredAttendance = attendanceMock.filter(item => {
+    if (!isFilterEnabled) return true;
 
-  const downloadPDF = () => {
+    const emp = employees.find(e => e.id === item.employeeId);
+
+    const matchDateRange = item.date >= startDate && item.date <= endDate;
+    const matchUser = selectedUser === "" || item.employeeId.toString() === selectedUser;
+    const matchFleet = selectedFleetFilter === "" || (emp && emp.flotilla === selectedFleetFilter);
+
+    return matchDateRange && matchUser && matchFleet;
+  });
+
+  
+  const generatePDF = (records: typeof attendanceMock, isAdvancedFilter: boolean) => {
     try {
       const doc = new jsPDF();
-      const records = filteredAttendance;
 
       doc.setFontSize(16);
-   
-      const tituloReporte = isFilterEnabled 
-        ? `Asistencias del Día: ${selectedDate}` 
+      const tituloReporte = isAdvancedFilter 
+        ? `Reporte de Filtración Avanzada` 
         : "Historial General de Asistencias";
-        
       doc.text(tituloReporte, 14, 20);
       
       doc.setFontSize(10);
       doc.text(`Generado por: ${currentUser.nombre} (ID: ${currentUser.id})`, 14, 28);
       doc.text(`Fecha de Reporte: ${new Date().toLocaleDateString()}`, 14, 34);
 
+     
+      if (isAdvancedFilter) {
+        const empFiltrado = employees.find(e => e.id.toString() === selectedUser);
+        const textoUsuario = empFiltrado ? empFiltrado.nombre : 'Todos';
+        const textoFlotilla = selectedFleetFilter || 'Todas';
+        
+        doc.text(`Filtros -> Rango: ${startDate} al ${endDate} | Colaborador: ${textoUsuario} | Flotilla: ${textoFlotilla}`, 14, 40);
+      }
+
       const columns = ["Fecha", "Colaborador", "Flotilla", "Entrada", "Salida", "Estado"];
-      
       const rows = records.map(item => {
         const emp = employees.find(e => e.id === item.employeeId);
         return [
@@ -84,15 +99,15 @@ const Dashboard: React.FC = () => {
       });
 
       autoTable(doc, {
-        startY: 40,
+        startY: isAdvancedFilter ? 46 : 40,
         head: [columns],
         body: rows,
         theme: "striped",
         headStyles: { fillColor: [67, 118, 199] } 
       });
 
-      const nombreArchivo = isFilterEnabled 
-        ? `Asistencias_${selectedDate}.pdf` 
+      const nombreArchivo = isAdvancedFilter 
+        ? `Filtracion_Avanzada_${startDate}_al_${endDate}.pdf` 
         : "Historial_General_Asistencias.pdf";
 
       doc.save(nombreArchivo);
@@ -101,7 +116,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // FUNCIÓN MODIFICADA: Ahora redirige pasando el estado con el nombre de la flotilla
   const handleFleetAction = (fleetName: string) => {
     history.push("/visualizarFlotilla", { fleet: fleetName });
   };
@@ -125,9 +139,7 @@ const Dashboard: React.FC = () => {
             <IonCard className="plan-card ion-no-margin">
               <img src={avatarBatman} alt="Logo" className="avatar-img" />
               <div className="card-details">
-                <p className="plan-tag">
-                  Rol: {currentUser.rol}
-                </p>
+                <p className="plan-tag">Rol: {currentUser.rol}</p>
                 <p className="title">Flotillas bajo gestión: </p>
                 <div className="flotillas">
                   {userFleets.length > 0 ? (
@@ -160,7 +172,6 @@ const Dashboard: React.FC = () => {
               )}
             </div>
 
-            {/* SECCIÓN FILTRO POR FECHA (MÓDULO DESPLEGABLE) */}
             <div className="date-filter-box">
               <div className="date-filter-header">
                 <label className="date-filter-label">
@@ -169,32 +180,105 @@ const Dashboard: React.FC = () => {
                     checked={isFilterEnabled} 
                     onChange={(e) => {
                       setIsFilterEnabled(e.target.checked);
-                      if(!e.target.checked) setIsDropdownOpen(false); 
+                      if(!e.target.checked) {
+                        setIsDropdownOpen(false);
+                        setSelectedUser("");
+                        setSelectedFleetFilter("");
+                      } 
                     }}
                   />
-                  Filtrar por fecha específica
+                  Habilitar filtros avanzados
                 </label>
-                
-                {isFilterEnabled && (
-                  <input 
-                    type="date" 
-                    className="date-input-native"
-                    value={selectedDate}
-                    onChange={(e) => {
-                      setSelectedDate(e.target.value);
-                      setIsDropdownOpen(true); 
-                    }}
-                  />
-                )}
               </div>
 
-              {/* Menú Desplegable */}
               {isFilterEnabled && (
-                <div className="dropdown-trigger-bar" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                  <span className="dropdown-trigger-text">
-                    Resultados para el: <strong>{selectedDate}</strong> ({filteredAttendance.length})
-                  </span>
-                  <IonIcon icon={isDropdownOpen ? chevronDownOutline : chevronForwardOutline} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
+            
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                      <span style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Desde:</span>
+                      <input 
+                        type="date" 
+                        className="date-input-native"
+                        value={startDate}
+                        onChange={(e) => {
+                          setStartDate(e.target.value);
+                          setIsDropdownOpen(true); 
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                      <span style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Hasta:</span>
+                      <input 
+                        type="date" 
+                        className="date-input-native"
+                        value={endDate}
+                        onChange={(e) => {
+                          setEndDate(e.target.value);
+                          setIsDropdownOpen(true); 
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Colaborador:</span>
+                    <select 
+                      value={selectedUser} 
+                      onChange={(e) => {
+                        setSelectedUser(e.target.value);
+                        setIsDropdownOpen(true);
+                      }}
+                      style={{ padding: '8px', borderRadius: '6px', border: '1px solid #ccc', backgroundColor: '#fff' }}
+                    >
+                      <option value="">Todos los colaboradores</option>
+                      {employees.map(emp => (
+                        <option key={emp.id} value={emp.id}>{emp.nombre}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Flotilla:</span>
+                    <select 
+                      value={selectedFleetFilter} 
+                      onChange={(e) => {
+                        setSelectedFleetFilter(e.target.value);
+                        setIsDropdownOpen(true);
+                      }}
+                      style={{ padding: '8px', borderRadius: '6px', border: '1px solid #ccc', backgroundColor: '#fff' }}
+                    >
+                      <option value="">Todas las flotillas</option>
+                      {[...new Set(employees.map(emp => emp.flotilla).filter(f => f))].map((fleet, idx) => (
+                        <option key={idx} value={fleet}>{fleet}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                </div>
+              )}
+
+              {isFilterEnabled && (
+                <div className="date-filter-header" style={{ marginTop: '14px', backgroundColor: '#f2f2f2', padding: '6px 10px', borderRadius: '6px' }}>
+                  <div className="dropdown-trigger-bar" onClick={() => setIsDropdownOpen(!isDropdownOpen)} style={{ flex: 1, border: 'none', margin: 0, padding: 0 }}>
+                    <span className="dropdown-trigger-text">
+                      Resultados del rango: <strong>({filteredAttendance.length})</strong>
+                    </span>
+                    <IonIcon icon={isDropdownOpen ? chevronDownOutline : chevronForwardOutline} style={{ marginLeft: '6px' }} />
+                  </div>
+                  
+                 
+                  <IonButton 
+                    fill="clear" 
+                    size="small" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      generatePDF(filteredAttendance, true);
+                    }}
+                    style={{ '--color': '#4376c7', margin: 0, padding: 0 }}
+                  >
+                    <IonIcon slot="icon-only" icon={downloadOutline} />
+                  </IonButton>
                 </div>
               )}
 
@@ -214,29 +298,27 @@ const Dashboard: React.FC = () => {
                             </span>
                           </div>
                           <p className="dropdown-trigger-text" style={{ margin: '4px 0 0 0', fontSize: '12px' }}>
-                            <strong>Flotilla:</strong> {empleado?.flotilla || "Sin asignar"} | <strong>Entrada:</strong> {item.entryTime} hrs {item.exitTime && `| Salida: ${item.exitTime} hrs`}
+                            <strong>Flotilla:</strong> {empleado?.flotilla || "Sin asignar"} | <strong>Fecha:</strong> {item.date} <br />
+                            <strong>Entrada:</strong> {item.entryTime} hrs {item.exitTime && `| Salida: ${item.exitTime} hrs`}
                           </p>
                         </div>
                       );
                     })
                   ) : (
                     <p className="dropdown-trigger-text" style={{ fontStyle: 'italic', textAlign: 'center', margin: '8px 0' }}>
-                      No hay asistencias registradas en esta fecha.
+                      No hay asistencias en este rango con los filtros seleccionados.
                     </p>
                   )}
                 </div>
               )}
             </div>
 
-            {/* SECCIÓN DEL BOTÓN DE DESCARGA ADAPTADO CON ESTILO INLINE REQUERIDO */}
             <div className="date-filter-header" style={{ marginTop: '24px', marginBottom: '12px' }}>
-              <h6 style={{ margin: 0 }}>
-                {isFilterEnabled ? "Todos los Registros Filtrados" : "Historial General de la Empresa"}
-              </h6>
+              <h6 style={{ margin: 0 }}>Historial de Asistencias en Pantalla</h6>
               <IonButton 
                 fill="clear" 
                 size="small" 
-                onClick={downloadPDF}
+                onClick={() => generatePDF(filteredAttendance, isFilterEnabled)}
                 style={{ '--color': '#4376c7', margin: 0, padding: 0 }}
               >
                 <IonIcon slot="icon-only" icon={downloadOutline} />
@@ -244,7 +326,6 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* LISTADO PRINCIPAL DINÁMICO */}
           <div className="container">
             {filteredAttendance && filteredAttendance.length > 0 ? (
               filteredAttendance.map((item) => {
@@ -256,7 +337,8 @@ const Dashboard: React.FC = () => {
                     style={{ 
                       padding: '12px', 
                       backgroundColor: '#f9f9f9',
-                      borderLeft: item.status === 'Completa' ? '4px solid #2dd36f' : '4px solid #3880ff' 
+                      borderLeft: item.status === 'Completa' ? '4px solid #2dd36f' : '4px solid #3880ff',
+                      marginBottom: '8px'
                     }}
                   >
                     <div className="date-filter-header" style={{ marginBottom: '6px' }}>
@@ -277,7 +359,7 @@ const Dashboard: React.FC = () => {
               })
             ) : (
               <p className="dropdown-trigger-text" style={{ paddingBottom: '30px', paddingLeft: '20px' }}>
-                No hay asistencias registradas.
+                No hay asistencias registradas con esos criterios.
               </p>
             )}
           </div>
@@ -285,11 +367,7 @@ const Dashboard: React.FC = () => {
       </IonContent >
       
        <IonTabBar slot="bottom" className="custom-tab-bar">
-              <IonTabButton 
-              tab="home" 
-              onClick={() => history.push("/supervisor")} 
-              className="custom-tab-btn"
-          >
+          <IonTabButton tab="home" onClick={() => history.push("/supervisor")} className="custom-tab-btn">
               <IonIcon icon={homeOutline} className="tab-icon" />
           </IonTabButton>
           <IonTabButton tab="perfil" onClick={() => history.push("/login")}  className="custom-tab-btn">

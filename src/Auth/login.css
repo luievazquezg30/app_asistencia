@@ -3,10 +3,10 @@
 }
 
 .login-wrapper {
-  height: 100vh; 
+  height: 100vh;
   display: flex !important;
   justify-content: center !important;
-  align-items: center !important;     
+  align-items: center !important;
 }
 
 .login-card {
@@ -57,4 +57,13 @@
   border-radius: 6px !important;
   font-weight: 600;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50px;
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

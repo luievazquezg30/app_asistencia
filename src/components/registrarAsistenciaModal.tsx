@@ -40,7 +40,6 @@ const RegisterAttendanceModal: React.FC<Props> = ({
   };
 
   const takePhoto = async () => {
-    // 1. INTENTAR LA CÁMARA PRIMERO
     try {
       console.log("Iniciando cámara...");
       const image = await Camera.getPhoto({
@@ -129,7 +128,7 @@ const RegisterAttendanceModal: React.FC<Props> = ({
           )}
         </div>
 
-        {/* Botones de Acción */}
+      
         <IonRow className="ion-margin-top">
           <IonCol>
             <IonButton
